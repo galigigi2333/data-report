@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jrx.springbatch.mapper.TransactionDetailsMapper">
+
+    
+
+    <select id="selectMaxAmt" resultType="jrx.springbatch.entity.SummaryStatistics">
+       SELECT MAX(a.bill)AS tranMaxAmt,a.cust_id as custId,a.txn_datetime AS transDate,SUM(a.bill) AS tranAmt,b.surname
+        from jrx_transaction_details AS a LEFT JOIN jrx_customer_info AS b ON a.cust_id=b.cust_id where  DATE_FORMAT(a.txn_datetime, '%Y-%m-%d') =#{date} GROUP BY a.cust_id
+    </select>
+    <select id="selectPay" resultType="jrx.springbatch.entity.SummaryStatistics">
+        SELECT COUNT(tranno) AS payCnt, SUM(bill) AS payAmt,cust_id as custId from jrx_transaction_details WHERE trans_type='还款'and DATE_FORMAT(txn_datetime, '%Y-%m-%d')=#{date}  GROUP BY cust_id
+    </select>
+    <select id="selectTran" resultType="jrx.springbatch.entity.SummaryStatistics">
+        SELECT COUNT(tranno) AS tranCnt,cust_id as custId from jrx_transaction_details WHERE trans_type='消费'and DATE_FORMAT(txn_datetime, '%Y-%m-%d') =#{date} GROUP BY cust_id
+    </select>
+</mapper>
